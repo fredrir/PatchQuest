@@ -1,22 +1,46 @@
 "use client";
 
-import { Group, Paper, Progress, Stack, Text, Title } from "@mantine/core";
+import { Button, Group, Paper, Progress, Stack, Text, Title } from "@mantine/core";
+import { modals } from "@mantine/modals";
 import { FlameIcon, TargetIcon } from "@/components/common/Icon";
 import { useProgress } from "@/state/useProgress";
 import { useStreak } from "@/state/useStreak";
+
+function resetAllProgress() {
+  try {
+    window.localStorage.clear();
+  } catch {
+    // ignore quota/private-mode errors
+  }
+  window.location.reload();
+}
 
 export function ProgressDisplay() {
   const { totals, accuracy } = useProgress();
   const { current, best } = useStreak();
   const accuracyPct = Math.round(accuracy * 100);
 
+  const confirmReset = () =>
+    modals.openConfirmModal({
+      title: "Reset all progress?",
+      centered: true,
+      children: (
+        <Text size="sm">
+          This will clear your attempts, streak, mistakes, and preferences from
+          this browser. This cannot be undone.
+        </Text>
+      ),
+      labels: { confirm: "Reset everything", cancel: "Cancel" },
+      confirmProps: { color: "red" },
+      onConfirm: resetAllProgress,
+    });
+
   return (
     <Paper
       withBorder
       radius="lg"
       p="lg"
-      bg={"var(--app-blue)"}
-      className=" text-white border-transparent"
+      className=" text-white border-transparent bg-app-accent"
     >
       <Stack gap="md">
         <Group justify="space-between" align="flex-start" wrap="nowrap">
@@ -61,6 +85,17 @@ export function ProgressDisplay() {
             className="bg-white/20"
           />
         </div>
+
+        <Group justify="flex-end">
+          <Button
+            size="xs"
+            variant="white"
+            color="dark"
+            onClick={confirmReset}
+          >
+            Reset progress
+          </Button>
+        </Group>
       </Stack>
     </Paper>
   );

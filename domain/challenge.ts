@@ -77,6 +77,144 @@ export interface ChallengeModeData {
 
   /** Optional override for the prompt used in Explain Like the Exam. */
   readonly explainPrompt?: string;
+
+  /** Optional intro line for Fix Suggestion above the code snippet. */
+  readonly fixSuggestion?: { readonly intro?: string };
+
+  /** Single-correct attack payload selection. */
+  readonly attackTrace?: AttackTraceQuestion;
+
+  /** Single-correct WSTG / Top10 mapping. */
+  readonly wstgMapping?: WstgMappingQuestion;
+
+  /** Secure-requirement rewrite prompt with expected concept keywords. */
+  readonly secureRequirement?: SecureRequirementPrompt;
+
+  /** STRIDE multi-select on a scenario / DFD description. */
+  readonly stride?: StrideQuestion;
+
+  /** Risk scoring single-choice with optional CVSS reference. */
+  readonly riskScoring?: RiskScoringQuestion;
+
+  /** Privacy/GDPR scenario with violated principles + DPIA flag. */
+  readonly privacyScenario?: PrivacyScenario;
+
+  /** Crypto-misuse multi-select on the snippet. */
+  readonly cryptoMisuse?: CryptoMisuseQuestion;
+
+  /** AI patch review: safe vs unsafe + concept keywords. */
+  readonly aiReview?: AiReviewScenario;
+
+  /** Multi-field vulnerability writeup template. */
+  readonly reportBuilder?: ReportBuilderTemplate;
+}
+
+export interface AttackTraceOption {
+  readonly id: string;
+  readonly label: string;
+  readonly request?: string;
+  readonly correct: boolean;
+  readonly rationale: string;
+}
+
+export interface AttackTraceQuestion {
+  readonly question: string;
+  readonly options: readonly AttackTraceOption[];
+}
+
+export interface WstgMappingOption {
+  readonly id: string;
+  readonly code: string;
+  readonly label: string;
+  readonly correct: boolean;
+  readonly rationale: string;
+}
+
+export interface WstgMappingQuestion {
+  readonly question: string;
+  readonly options: readonly WstgMappingOption[];
+  readonly top10Hint?: string;
+}
+
+export interface SecureRequirementPrompt {
+  readonly bad: string;
+  readonly context: string;
+  readonly keywords: readonly string[];
+  readonly goodExample: string;
+}
+
+export interface StrideOption {
+  readonly id: "S" | "T" | "R" | "I" | "D" | "E";
+  readonly label: string;
+  readonly correct: boolean;
+  readonly rationale: string;
+}
+
+export interface StrideQuestion {
+  readonly scenario: string;
+  readonly diagram?: string;
+  readonly options: readonly StrideOption[];
+}
+
+export interface RiskScoringOption {
+  readonly id: string;
+  readonly label: string;
+  readonly correct: boolean;
+  readonly rationale: string;
+}
+
+export interface RiskScoringQuestion {
+  readonly scenario: string;
+  readonly cvssVector?: string;
+  readonly question: string;
+  readonly options: readonly RiskScoringOption[];
+}
+
+export interface PrivacyPrincipleOption {
+  readonly id: string;
+  readonly label: string;
+  readonly correct: boolean;
+  readonly rationale: string;
+}
+
+export interface PrivacyScenario {
+  readonly scenario: string;
+  readonly principles: readonly PrivacyPrincipleOption[];
+  readonly dpiaRequired: boolean;
+  readonly dpiaRationale: string;
+}
+
+export interface CryptoMisuseOption {
+  readonly id: string;
+  readonly label: string;
+  readonly correct: boolean;
+  readonly rationale: string;
+}
+
+export interface CryptoMisuseQuestion {
+  readonly question: string;
+  readonly options: readonly CryptoMisuseOption[];
+}
+
+export interface AiReviewScenario {
+  readonly originalCode: string;
+  readonly aiPatch: string;
+  readonly language: string;
+  readonly aiClaim: string;
+  readonly safe: boolean;
+  readonly reasonKeywords: readonly string[];
+}
+
+export interface ReportBuilderField {
+  readonly id: string;
+  readonly label: string;
+  readonly placeholder: string;
+  readonly keywords: readonly string[];
+  readonly multiline?: boolean;
+}
+
+export interface ReportBuilderTemplate {
+  readonly fields: readonly ReportBuilderField[];
 }
 
 export class ChallengeRepository {

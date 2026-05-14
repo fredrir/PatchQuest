@@ -15,7 +15,7 @@ export function ExamModeToggle({ compact = false }: Props) {
       multiline
       w={240}
     >
-      <Group gap={compact ? "xs" : "sm"} wrap="nowrap">
+      <Group gap={compact ? "xs" : "sm"} className="min-w-32" wrap="nowrap">
         <Switch
           checked={settings.examMode}
           onChange={(e) => setExamMode(e.currentTarget.checked)}

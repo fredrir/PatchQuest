@@ -10,7 +10,10 @@ export type Answer =
   | FixSelectionAnswer
   | FindAndFixAnswer
   | TextAnswer
-  | MultipleChoiceAnswer;
+  | MultipleChoiceAnswer
+  | MultiSelectAnswer
+  | AiReviewAnswer
+  | ReportBuilderAnswer;
 
 export interface AnswerBase {
   readonly challengeId: ChallengeId;
@@ -42,4 +45,20 @@ export interface TextAnswer extends AnswerBase {
 export interface MultipleChoiceAnswer extends AnswerBase {
   readonly kind: "multiple-choice";
   readonly selectedOptionId: string | null;
+}
+
+export interface MultiSelectAnswer extends AnswerBase {
+  readonly kind: "multi-select";
+  readonly selectedOptionIds: readonly string[];
+}
+
+export interface AiReviewAnswer extends AnswerBase {
+  readonly kind: "ai-review";
+  readonly verdict: "safe" | "unsafe" | null;
+  readonly reason: string;
+}
+
+export interface ReportBuilderAnswer extends AnswerBase {
+  readonly kind: "report-builder";
+  readonly fields: Readonly<Record<string, string>>;
 }

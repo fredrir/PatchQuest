@@ -1,8 +1,21 @@
 "use client";
 
-import { Badge, Button, Chip, Divider, Group, Paper, Stack, Text } from "@mantine/core";
+import {
+  Badge,
+  Button,
+  Chip,
+  Divider,
+  Group,
+  Paper,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { COURSE_TOPIC_META, type CourseTopic } from "@/domain/topic";
-import { DIFFICULTIES, DIFFICULTY_META, type Difficulty } from "@/domain/difficulty";
+import {
+  DIFFICULTIES,
+  DIFFICULTY_META,
+  type Difficulty,
+} from "@/domain/difficulty";
 import { useSettings } from "@/state/useSettings";
 import { FilterIcon, GaugeIcon, TagIcon } from "@/components/common/Icon";
 
@@ -30,11 +43,17 @@ export function FiltersBar() {
       <Group
         justify="space-between"
         wrap="nowrap"
+        align="center"
         px="lg"
         py="sm"
-        className="bg-app-surface-muted border-b border-app-border"
+        className="bg-app-surface-muted border-b border-app-border min-h-8"
       >
-        <Group gap="xs" wrap="nowrap">
+        <Group
+          gap="xs"
+          wrap="nowrap"
+          align="center"
+          className="flex items-center"
+        >
           <span className="text-app-accent inline-flex">
             <FilterIcon size={18} />
           </span>
@@ -45,11 +64,7 @@ export function FiltersBar() {
             <Badge size="sm" radius="sm" variant="light" color="ntnuBlue">
               {topicSelected + difficultySelected} active
             </Badge>
-          ) : (
-            <Text size="xs" c="dimmed">
-              Showing all challenges
-            </Text>
-          )}
+          ) : null}
         </Group>
         <Button
           size="compact-xs"
@@ -151,7 +166,12 @@ function FilterSection({
       <Group justify="space-between" align="center" mb="xs" wrap="nowrap">
         <Group gap={8} wrap="nowrap" align="center">
           <span className="text-app-fg-muted inline-flex">{icon}</span>
-          <Text size="xs" tt="uppercase" fw={700} className="text-app-fg-muted tracking-wider">
+          <Text
+            size="xs"
+            tt="uppercase"
+            fw={700}
+            className="text-app-fg-muted tracking-wider"
+          >
             {label}
           </Text>
           <Text size="xs" className="text-app-fg-subtle tabular-nums">

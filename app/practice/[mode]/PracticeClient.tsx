@@ -13,6 +13,16 @@ import { VulnSearchRunner } from "@/modes/VulnSearchRunner";
 import { FindAndFixRunner } from "@/modes/FindAndFixRunner";
 import { ExplainRunner } from "@/modes/ExplainRunner";
 import { MultipleChoiceSprintRunner } from "@/modes/MultipleChoiceSprintRunner";
+import { FixSuggestionRunner } from "@/modes/FixSuggestionRunner";
+import { AttackTraceRunner } from "@/modes/AttackTraceRunner";
+import { WstgMappingRunner } from "@/modes/WstgMappingRunner";
+import { SecureRequirementRunner } from "@/modes/SecureRequirementRunner";
+import { StrideRunner } from "@/modes/StrideRunner";
+import { RiskScoringRunner } from "@/modes/RiskScoringRunner";
+import { PrivacyGdprRunner } from "@/modes/PrivacyGdprRunner";
+import { CryptoMisuseRunner } from "@/modes/CryptoMisuseRunner";
+import { AiReviewRunner } from "@/modes/AiReviewRunner";
+import { ReportBuilderRunner } from "@/modes/ReportBuilderRunner";
 
 export function PracticeClient({ slug }: { slug: string }) {
   const router = useRouter();
@@ -78,23 +88,58 @@ export function PracticeClient({ slug }: { slug: string }) {
 
   return (
     <Stack gap="md">
-      {mode.id === GAME_MODE_IDS.vulnSearch ? (
-        <VulnSearchRunner challenges={challenges} examMode={settings.examMode} />
-      ) : mode.id === GAME_MODE_IDS.findAndFix ? (
-        <FindAndFixRunner challenges={challenges} examMode={settings.examMode} />
-      ) : mode.id === GAME_MODE_IDS.explainExam ? (
-        <ExplainRunner challenges={challenges} examMode={settings.examMode} />
-      ) : mode.id === GAME_MODE_IDS.multipleChoiceSprint ? (
+      {renderRunner(mode.id, challenges, settings.examMode)}
+    </Stack>
+  );
+}
+
+function renderRunner(
+  modeId: string,
+  challenges: ReturnType<typeof challengeRepository.filter>,
+  examMode: boolean,
+) {
+  switch (modeId) {
+    case GAME_MODE_IDS.vulnSearch:
+      return <VulnSearchRunner challenges={challenges} examMode={examMode} />;
+    case GAME_MODE_IDS.findAndFix:
+      return <FindAndFixRunner challenges={challenges} examMode={examMode} />;
+    case GAME_MODE_IDS.explainExam:
+      return <ExplainRunner challenges={challenges} examMode={examMode} />;
+    case GAME_MODE_IDS.multipleChoiceSprint:
+      return (
         <MultipleChoiceSprintRunner
           challenges={challenges}
-          examMode={settings.examMode}
+          examMode={examMode}
         />
-      ) : (
+      );
+    case GAME_MODE_IDS.fixSuggestion:
+      return <FixSuggestionRunner challenges={challenges} examMode={examMode} />;
+    case GAME_MODE_IDS.attackTrace:
+      return <AttackTraceRunner challenges={challenges} examMode={examMode} />;
+    case GAME_MODE_IDS.wstgMapping:
+      return <WstgMappingRunner challenges={challenges} examMode={examMode} />;
+    case GAME_MODE_IDS.secureRequirement:
+      return (
+        <SecureRequirementRunner challenges={challenges} examMode={examMode} />
+      );
+    case GAME_MODE_IDS.strideThreat:
+      return <StrideRunner challenges={challenges} examMode={examMode} />;
+    case GAME_MODE_IDS.riskScoring:
+      return <RiskScoringRunner challenges={challenges} examMode={examMode} />;
+    case GAME_MODE_IDS.privacyGdpr:
+      return <PrivacyGdprRunner challenges={challenges} examMode={examMode} />;
+    case GAME_MODE_IDS.cryptoMisuse:
+      return <CryptoMisuseRunner challenges={challenges} examMode={examMode} />;
+    case GAME_MODE_IDS.aiReview:
+      return <AiReviewRunner challenges={challenges} examMode={examMode} />;
+    case GAME_MODE_IDS.reportBuilder:
+      return <ReportBuilderRunner challenges={challenges} examMode={examMode} />;
+    default:
+      return (
         <EmptyState
           title="No runner registered for this mode"
           description="The mode is marked as ready but no runner is wired in."
         />
-      )}
-    </Stack>
-  );
+      );
+  }
 }

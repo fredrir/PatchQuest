@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Badge, NavLink, ScrollArea, Stack, Text } from "@mantine/core";
+import { Badge, Group, NavLink, ScrollArea, Stack, Text } from "@mantine/core";
 import { GAME_MODES } from "@/domain/gameMode";
 import { GameModeIconView } from "@/components/common/Icon";
+import { ExamModeToggle } from "../common/ExamModeToggle";
+import { ThemeToggle } from "../common/ThemeToggle";
 
 interface Props {
   onNavigate?: () => void;
@@ -19,6 +21,24 @@ export function Sidebar({ onNavigate }: Props) {
   return (
     <ScrollArea h="100%" type="auto" scrollbarSize={6}>
       <Stack gap={2} p="sm">
+        <Stack hiddenFrom="sm" gap={6} mb="xs">
+          <Text size="xs" tt="uppercase" fw={700} c="dimmed">
+            Preferences
+          </Text>
+          <Group
+            justify="space-between"
+            wrap="nowrap"
+            className="bg-app-accent-soft border border-app-border rounded-xl px-3 py-2.5"
+          >
+            <ExamModeToggle compact />
+            <ThemeToggle />
+          </Group>
+        </Stack>
+
+        <Text size="xs" tt="uppercase" fw={700} c="dimmed" mt="md" mb={4}>
+          Navigation
+        </Text>
+
         <NavLink
           component={Link}
           href="/"
@@ -36,15 +56,7 @@ export function Sidebar({ onNavigate }: Props) {
           variant="filled"
         />
 
-        <Text
-          size="xs"
-          tt="uppercase"
-          fw={700}
-          c="dimmed"
-          mt="md"
-          mb={4}
-          px="sm"
-        >
+        <Text size="xs" tt="uppercase" fw={700} c="dimmed" mt="md" mb={4}>
           Game modes
         </Text>
 
@@ -63,7 +75,9 @@ export function Sidebar({ onNavigate }: Props) {
               variant="filled"
               disabled={!ready}
               leftSection={
-                <span style={{ color: `var(--mantine-color-${mode.accent}-6)` }}>
+                <span
+                  style={{ color: `var(--mantine-color-${mode.accent}-6)` }}
+                >
                   <GameModeIconView name={mode.icon} size={18} />
                 </span>
               }

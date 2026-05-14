@@ -95,7 +95,7 @@ export const GAME_MODES: readonly GameModeMeta[] = [
     title: "Explain Like the Exam",
     tagline: "Three to six sentences",
     description:
-      "Write an exam-style answer; we score it against expected keywords.",
+      "Write an exam-style answer; Scoring is based on expected keywords.",
     accent: "purple",
     icon: "pencil",
     status: "ready",
@@ -110,7 +110,7 @@ export const GAME_MODES: readonly GameModeMeta[] = [
       "Choose the safest patch among tempting decoys like blacklists or weak hashes.",
     accent: "lightBlue",
     icon: "wrench",
-    status: "coming-soon",
+    status: "ready",
   },
 
   {
@@ -122,7 +122,7 @@ export const GAME_MODES: readonly GameModeMeta[] = [
     description: "Choose the exploit request sequence that triggers the bug.",
     accent: "orange",
     icon: "bug",
-    status: "coming-soon",
+    status: "ready",
   },
   {
     id: GAME_MODE_IDS.wstgMapping,
@@ -133,7 +133,7 @@ export const GAME_MODES: readonly GameModeMeta[] = [
     description: "Map a finding to the correct OWASP WSTG and Top 10 category.",
     accent: "lime",
     icon: "map",
-    status: "coming-soon",
+    status: "ready",
   },
   {
     id: GAME_MODE_IDS.secureRequirement,
@@ -144,7 +144,7 @@ export const GAME_MODES: readonly GameModeMeta[] = [
     description: "Take a vague rule and make it specific, testable, and safe.",
     accent: "beige",
     icon: "flag",
-    status: "coming-soon",
+    status: "ready",
   },
   {
     id: GAME_MODE_IDS.strideThreat,
@@ -156,7 +156,7 @@ export const GAME_MODES: readonly GameModeMeta[] = [
       "Map an architecture description to STRIDE categories of threats.",
     accent: "magenta",
     icon: "diagram",
-    status: "coming-soon",
+    status: "ready",
   },
   {
     id: GAME_MODE_IDS.riskScoring,
@@ -167,7 +167,7 @@ export const GAME_MODES: readonly GameModeMeta[] = [
     description: "Estimate likelihood, impact and overall severity.",
     accent: "orange",
     icon: "scale",
-    status: "coming-soon",
+    status: "ready",
   },
   {
     id: GAME_MODE_IDS.privacyGdpr,
@@ -179,7 +179,7 @@ export const GAME_MODES: readonly GameModeMeta[] = [
       "Identify which privacy principles a feature violates and when DPIA is needed.",
     accent: "yellow",
     icon: "lock",
-    status: "coming-soon",
+    status: "ready",
   },
   {
     id: GAME_MODE_IDS.cryptoMisuse,
@@ -190,7 +190,7 @@ export const GAME_MODES: readonly GameModeMeta[] = [
     description: "Identify reused keys, weak randomness, missing integrity.",
     accent: "turquoise",
     icon: "key",
-    status: "coming-soon",
+    status: "ready",
   },
 
   {
@@ -202,7 +202,7 @@ export const GAME_MODES: readonly GameModeMeta[] = [
     description: "Decide whether an AI-generated patch is actually secure.",
     accent: "magenta",
     icon: "robot",
-    status: "coming-soon",
+    status: "ready",
   },
   {
     id: GAME_MODE_IDS.reportBuilder,
@@ -213,7 +213,7 @@ export const GAME_MODES: readonly GameModeMeta[] = [
     description: "Author a vulnerability report end to end.",
     accent: "ntnuBlue",
     icon: "report",
-    status: "coming-soon",
+    status: "ready",
   },
 ] as const;
 

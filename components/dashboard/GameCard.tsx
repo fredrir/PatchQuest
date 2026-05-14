@@ -19,7 +19,7 @@ export function GameCard({ mode, challengeCount }: Props) {
       padding="lg"
       radius="lg"
       h="100%"
-      className={`game-card hover:shadow-md bg-app-surface border-app-border relative overflow-hidden transition-[transform,box-shadow,border-color] duration-150 ${
+      className={`game-card group hover:shadow-md bg-app-surface border-app-border relative overflow-hidden transition-[transform,box-shadow,border-color] duration-150 ${
         ready ? "cursor-pointer opacity-100" : "cursor-not-allowed opacity-60"
       }`}
     >
@@ -48,7 +48,7 @@ export function GameCard({ mode, challengeCount }: Props) {
         </Group>
 
         <div>
-          <Title order={4} mt={4}>
+          <Title className="group-hover:underline" order={4} mt={4}>
             {mode.title}
           </Title>
           <Text size="sm" c="dimmed" mt={2}>

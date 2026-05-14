@@ -2,6 +2,7 @@ import type { Answer } from "./answer";
 import type { Challenge } from "./challenge";
 import type { Feedback } from "./feedback";
 import { verdictFromScore } from "./scoring";
+import { GAME_MODE_IDS } from "./gameMode";
 
 /** Set-similarity for line-selection answers (Jaccard). */
 function jaccard<T>(
@@ -69,9 +70,15 @@ export function gradeAnswer(challenge: Challenge, answer: Answer): Feedback {
         answer.selectedFixId,
       );
     case "text":
-      return gradeText(challenge, answer.text);
+      return gradeText(challenge, answer);
     case "multiple-choice":
-      return gradeMultipleChoice(challenge, answer.selectedOptionId);
+      return gradeMultipleChoice(challenge, answer);
+    case "multi-select":
+      return gradeMultiSelect(challenge, answer);
+    case "ai-review":
+      return gradeAiReview(challenge, answer);
+    case "report-builder":
+      return gradeReportBuilder(challenge, answer);
   }
 }
 
@@ -167,8 +174,22 @@ function gradeFindAndFix(
   };
 }
 
-function gradeText(challenge: Challenge, text: string): Feedback {
-  const { score, matched, missed } = gradeKeywords(text, challenge.examKeywords);
+function keywordsForTextMode(
+  challenge: Challenge,
+  mode: string,
+): readonly string[] {
+  if (mode === GAME_MODE_IDS.secureRequirement && challenge.modeData?.secureRequirement) {
+    return challenge.modeData.secureRequirement.keywords;
+  }
+  return challenge.examKeywords;
+}
+
+function gradeText(
+  challenge: Challenge,
+  answer: { text: string; mode: string },
+): Feedback {
+  const keywords = keywordsForTextMode(challenge, answer.mode);
+  const { score, matched, missed } = gradeKeywords(answer.text, keywords);
   const verdict = verdictFromScore(score);
   return {
     verdict,
@@ -191,25 +212,233 @@ function gradeText(challenge: Challenge, text: string): Feedback {
   };
 }
 
+interface PickableOption {
+  readonly id: string;
+  readonly correct: boolean;
+  readonly rationale: string;
+}
+
+function optionsForChoiceMode(
+  challenge: Challenge,
+  mode: string,
+): readonly PickableOption[] | null {
+  if (mode === GAME_MODE_IDS.attackTrace && challenge.modeData?.attackTrace) {
+    return challenge.modeData.attackTrace.options;
+  }
+  if (mode === GAME_MODE_IDS.wstgMapping && challenge.modeData?.wstgMapping) {
+    return challenge.modeData.wstgMapping.options;
+  }
+  if (mode === GAME_MODE_IDS.riskScoring && challenge.modeData?.riskScoring) {
+    return challenge.modeData.riskScoring.options;
+  }
+  if (challenge.modeData?.multipleChoice) {
+    return challenge.modeData.multipleChoice.options.map((o) => ({
+      id: o.id,
+      correct: o.correct,
+      rationale: o.rationale ?? "",
+    }));
+  }
+  return null;
+}
+
 function gradeMultipleChoice(
   challenge: Challenge,
-  selectedOptionId: string | null,
+  answer: { selectedOptionId: string | null; mode: string },
 ): Feedback {
-  const mc = challenge.modeData?.multipleChoice;
-  if (!mc) {
+  const options = optionsForChoiceMode(challenge, answer.mode);
+  if (!options) {
     return {
       verdict: "incorrect",
       score: 0,
       headline: "No question",
-      detail: "This challenge does not include a multiple-choice question.",
+      detail: "This challenge does not include a question for this mode.",
     };
   }
-  const picked = mc.options.find((o) => o.id === selectedOptionId);
+  const picked = options.find((o) => o.id === answer.selectedOptionId);
   const correct = picked?.correct === true;
   return {
     verdict: correct ? "correct" : "incorrect",
     score: correct ? 1 : 0,
     headline: correct ? "Correct" : "Incorrect",
-    detail: picked?.rationale ?? challenge.explanation,
+    detail: picked?.rationale
+      ? `${picked.rationale}\n\n${challenge.explanation}`
+      : challenge.explanation,
+  };
+}
+
+function optionsForMultiSelect(
+  challenge: Challenge,
+  mode: string,
+): readonly PickableOption[] | null {
+  if (mode === GAME_MODE_IDS.strideThreat && challenge.modeData?.stride) {
+    return challenge.modeData.stride.options;
+  }
+  if (mode === GAME_MODE_IDS.privacyGdpr && challenge.modeData?.privacyScenario) {
+    return challenge.modeData.privacyScenario.principles;
+  }
+  if (mode === GAME_MODE_IDS.cryptoMisuse && challenge.modeData?.cryptoMisuse) {
+    return challenge.modeData.cryptoMisuse.options;
+  }
+  return null;
+}
+
+function gradeMultiSelect(
+  challenge: Challenge,
+  answer: { selectedOptionIds: readonly string[]; mode: string },
+): Feedback {
+  const options = optionsForMultiSelect(challenge, answer.mode);
+  if (!options) {
+    return {
+      verdict: "incorrect",
+      score: 0,
+      headline: "No question",
+      detail: "This challenge does not include a multi-select question for this mode.",
+    };
+  }
+  const correctIds = new Set(options.filter((o) => o.correct).map((o) => o.id));
+  const selected = new Set(answer.selectedOptionIds);
+  let truePositive = 0;
+  let falsePositive = 0;
+  for (const id of selected) {
+    if (correctIds.has(id)) truePositive += 1;
+    else falsePositive += 1;
+  }
+  const falseNegative = correctIds.size - truePositive;
+  const denom = truePositive + falsePositive + falseNegative;
+  const score = denom === 0 ? 1 : truePositive / denom;
+  const verdict = verdictFromScore(score);
+
+  const correctLabels = options
+    .filter((o) => o.correct)
+    .map((o) => (o as PickableOption & { label?: string }).label ?? o.id);
+  const missed = options
+    .filter((o) => o.correct && !selected.has(o.id))
+    .map((o) => (o as PickableOption & { label?: string }).label ?? o.id);
+  const extra = options
+    .filter((o) => !o.correct && selected.has(o.id))
+    .map((o) => (o as PickableOption & { label?: string }).label ?? o.id);
+
+  return {
+    verdict,
+    score,
+    headline:
+      verdict === "correct"
+        ? "All threats found"
+        : verdict === "partial"
+          ? "Some on target"
+          : "Re-read the scenario",
+    detail: challenge.explanation,
+    highlights: [
+      {
+        label: "Expected",
+        tone: "neutral",
+        value: correctLabels.join(", ") || "none",
+      },
+      missed.length
+        ? { label: "Missed", tone: "negative", value: missed.join(", ") }
+        : { label: "Missed", tone: "positive", value: "none" },
+      extra.length
+        ? { label: "Extra", tone: "negative", value: extra.join(", ") }
+        : { label: "Extra", tone: "positive", value: "none" },
+    ],
+  };
+}
+
+function gradeAiReview(
+  challenge: Challenge,
+  answer: { verdict: "safe" | "unsafe" | null; reason: string },
+): Feedback {
+  const scenario = challenge.modeData?.aiReview;
+  if (!scenario) {
+    return {
+      verdict: "incorrect",
+      score: 0,
+      headline: "No AI review",
+      detail: "This challenge does not include an AI review scenario.",
+    };
+  }
+  const expected = scenario.safe ? "safe" : "unsafe";
+  const verdictCorrect = answer.verdict === expected;
+  const { score: keywordScore, matched, missed } = gradeKeywords(
+    answer.reason,
+    scenario.reasonKeywords,
+  );
+  const score = verdictCorrect
+    ? 0.6 + 0.4 * keywordScore
+    : 0.2 * keywordScore;
+  const verdict = verdictFromScore(score);
+  return {
+    verdict,
+    score,
+    headline: verdictCorrect
+      ? keywordScore >= 0.7
+        ? "Well-justified verdict"
+        : "Right call, thin reasoning"
+      : "Wrong verdict",
+    detail: challenge.explanation,
+    highlights: [
+      {
+        label: "Expected verdict",
+        tone: verdictCorrect ? "positive" : "negative",
+        value: expected,
+      },
+      matched.length
+        ? { label: "Mentioned", tone: "positive", value: matched.join(", ") }
+        : { label: "Mentioned", tone: "neutral", value: "none" },
+      missed.length
+        ? { label: "Missing", tone: "negative", value: missed.join(", ") }
+        : { label: "Missing", tone: "positive", value: "none" },
+    ],
+  };
+}
+
+function gradeReportBuilder(
+  challenge: Challenge,
+  answer: { fields: Readonly<Record<string, string>> },
+): Feedback {
+  const template = challenge.modeData?.reportBuilder;
+  if (!template) {
+    return {
+      verdict: "incorrect",
+      score: 0,
+      headline: "No template",
+      detail: "This challenge does not include a report-builder template.",
+    };
+  }
+  let total = 0;
+  let achieved = 0;
+  const highlights: Array<{
+    label: string;
+    tone: "positive" | "negative" | "neutral";
+    value?: string;
+  }> = [];
+  for (const field of template.fields) {
+    if (field.keywords.length === 0) continue;
+    const value = answer.fields[field.id] ?? "";
+    const { score, missed } = gradeKeywords(value, field.keywords);
+    total += 1;
+    achieved += score;
+    highlights.push({
+      label: field.label,
+      tone: score >= 0.7 ? "positive" : score > 0 ? "neutral" : "negative",
+      value:
+        missed.length === 0
+          ? "complete"
+          : `missing: ${missed.slice(0, 3).join(", ")}`,
+    });
+  }
+  const overall = total === 0 ? 1 : achieved / total;
+  const verdict = verdictFromScore(overall);
+  return {
+    verdict,
+    score: overall,
+    headline:
+      verdict === "correct"
+        ? "Reportable writeup"
+        : verdict === "partial"
+          ? "Add the missing pieces"
+          : "Needs much more depth",
+    detail: challenge.explanation,
+    highlights,
   };
 }

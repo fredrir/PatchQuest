@@ -13,15 +13,14 @@ interface Props {
 
 export function Header({ navOpened, onToggleNav }: Props) {
   return (
-    <Group h="100%" px="lg" justify="space-between" wrap="nowrap">
-      <Group gap="md" wrap="nowrap">
-        <Burger
-          opened={navOpened}
-          onClick={onToggleNav}
-          hiddenFrom="sm"
-          size="sm"
-          aria-label="Toggle navigation"
-        />
+    <Group h="100%" w="100%" px="lg" align="center" wrap="nowrap">
+      <Group
+        gap="md"
+        w="100%"
+        align="center"
+        justify="space-between"
+        wrap="nowrap"
+      >
         <Link
           href="/"
           className="no-underline text-inherit hover:opacity-80 transition-opacity duration-150"
@@ -46,8 +45,15 @@ export function Header({ navOpened, onToggleNav }: Props) {
             </div>
           </Group>
         </Link>
+        <Burger
+          opened={navOpened}
+          onClick={onToggleNav}
+          hiddenFrom="sm"
+          size="sm"
+          aria-label="Toggle navigation"
+        />
       </Group>
-      <Group gap="sm" wrap="nowrap">
+      <Group gap="sm" wrap="nowrap" visibleFrom="sm">
         <ExamModeToggle compact />
         <ThemeToggle />
       </Group>

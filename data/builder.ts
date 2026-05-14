@@ -6,6 +6,7 @@ import { GAME_MODE_IDS } from "@/domain/gameMode";
 /** Default mode set for code-based challenges that have fix options. */
 export const ALL_CODE_MODES: readonly GameModeId[] = [
   GAME_MODE_IDS.vulnSearch,
+  GAME_MODE_IDS.fixSuggestion,
   GAME_MODE_IDS.findAndFix,
   GAME_MODE_IDS.explainExam,
   GAME_MODE_IDS.multipleChoiceSprint,
@@ -57,6 +58,7 @@ function defaultModesFor(
     modes.push(GAME_MODE_IDS.vulnSearch);
     if (fixOptions.length > 0 && args.correctFixId) {
       modes.push(GAME_MODE_IDS.findAndFix);
+      modes.push(GAME_MODE_IDS.fixSuggestion);
     }
   }
   if (args.examKeywords.length > 0) {
@@ -64,6 +66,33 @@ function defaultModesFor(
   }
   if (args.modeData?.multipleChoice) {
     modes.push(GAME_MODE_IDS.multipleChoiceSprint);
+  }
+  if (args.modeData?.attackTrace) {
+    modes.push(GAME_MODE_IDS.attackTrace);
+  }
+  if (args.modeData?.wstgMapping) {
+    modes.push(GAME_MODE_IDS.wstgMapping);
+  }
+  if (args.modeData?.secureRequirement) {
+    modes.push(GAME_MODE_IDS.secureRequirement);
+  }
+  if (args.modeData?.stride) {
+    modes.push(GAME_MODE_IDS.strideThreat);
+  }
+  if (args.modeData?.riskScoring) {
+    modes.push(GAME_MODE_IDS.riskScoring);
+  }
+  if (args.modeData?.privacyScenario) {
+    modes.push(GAME_MODE_IDS.privacyGdpr);
+  }
+  if (args.modeData?.cryptoMisuse) {
+    modes.push(GAME_MODE_IDS.cryptoMisuse);
+  }
+  if (args.modeData?.aiReview) {
+    modes.push(GAME_MODE_IDS.aiReview);
+  }
+  if (args.modeData?.reportBuilder) {
+    modes.push(GAME_MODE_IDS.reportBuilder);
   }
   return modes;
 }

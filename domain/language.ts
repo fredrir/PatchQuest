@@ -12,6 +12,7 @@ export const CODE_LANGUAGES = [
   "bash",
   "yaml",
   "json",
+  "http",
   "plaintext",
 ] as const;
 
@@ -31,5 +32,6 @@ export const LANGUAGE_LABEL: Record<CodeLanguage, string> = {
   bash: "Bash",
   yaml: "YAML",
   json: "JSON",
+  http: "HTTP",
   plaintext: "Text",
 };
