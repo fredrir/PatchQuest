@@ -1,26 +1,197 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ------------------------------------------------------------------ */
+/* Design tokens — light scheme defaults                              */
+/* ------------------------------------------------------------------ */
+:root,
+[data-mantine-color-scheme="light"] {
+  --app-bg: #f4f6fb;
+  --app-bg-elevated: #ffffff;
+  --app-surface: #ffffff;
+  --app-surface-muted: #f7f8fc;
+  --app-border: rgba(15, 23, 42, 0.08);
+  --app-border-strong: rgba(15, 23, 42, 0.14);
+  --app-fg: #0e1116;
+  --app-fg-muted: #4b5468;
+  --app-fg-subtle: #717a8c;
+  --app-accent: #00509e;
+  --app-accent-soft: rgba(0, 80, 158, 0.10);
+  --app-success: #2f8f3a;
+  --app-success-soft: rgba(47, 143, 58, 0.12);
+  --app-danger: #c0341d;
+  --app-danger-soft: rgba(192, 52, 29, 0.12);
+  --app-warning: #b56a00;
+  --app-warning-soft: rgba(239, 129, 20, 0.14);
+  --app-code-bg: #0e1116;
+  --app-code-bg-soft: #f3f4f8;
+  --app-code-fg: #e7eaf2;
+  --app-code-line-hover: rgba(96, 150, 208, 0.16);
+  --app-code-line-selected: rgba(239, 129, 20, 0.22);
+  --app-code-line-correct: rgba(47, 143, 58, 0.22);
+  --app-code-line-incorrect: rgba(192, 52, 29, 0.24);
+  --app-code-gutter: #6b7283;
 }
 
+[data-mantine-color-scheme="dark"] {
+  --app-bg: #0a0d14;
+  --app-bg-elevated: #131822;
+  --app-surface: #161c28;
+  --app-surface-muted: #1d2533;
+  --app-border: rgba(255, 255, 255, 0.08);
+  --app-border-strong: rgba(255, 255, 255, 0.16);
+  --app-fg: #eef1f7;
+  --app-fg-muted: #aab2c4;
+  --app-fg-subtle: #7c8499;
+  --app-accent: #6096d0;
+  --app-accent-soft: rgba(96, 150, 208, 0.18);
+  --app-success: #61c46f;
+  --app-success-soft: rgba(97, 196, 111, 0.16);
+  --app-danger: #ff7766;
+  --app-danger-soft: rgba(255, 119, 102, 0.18);
+  --app-warning: #f7c87a;
+  --app-warning-soft: rgba(247, 200, 122, 0.18);
+  --app-code-bg: #0a0d14;
+  --app-code-bg-soft: #131822;
+  --app-code-fg: #e7eaf2;
+  --app-code-line-hover: rgba(96, 150, 208, 0.18);
+  --app-code-line-selected: rgba(247, 208, 25, 0.22);
+  --app-code-line-correct: rgba(97, 196, 111, 0.22);
+  --app-code-line-incorrect: rgba(255, 119, 102, 0.26);
+  --app-code-gutter: #8a93a8;
+}
+
+/* Surface Tailwind tokens for any utilities that want them */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-app-bg: var(--app-bg);
+  --color-app-surface: var(--app-surface);
+  --color-app-surface-muted: var(--app-surface-muted);
+  --color-app-border: var(--app-border);
+  --color-app-fg: var(--app-fg);
+  --color-app-fg-muted: var(--app-fg-muted);
+  --color-app-accent: var(--app-accent);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  background: var(--app-bg);
+  color: var(--app-fg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI",
+    Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle animated gradient backdrop on app shell — purely decorative */
+.app-backdrop {
+  background:
+    radial-gradient(
+      1100px 520px at 12% -10%,
+      var(--app-accent-soft) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 420px at 92% 6%,
+      rgba(188, 208, 37, 0.10) 0%,
+      transparent 60%
+    ),
+    var(--app-bg);
+}
+
+/* Typography helpers used outside Mantine */
+.text-muted {
+  color: var(--app-fg-muted);
+}
+.text-subtle {
+  color: var(--app-fg-subtle);
+}
+
+/* Selectable code lines */
+.code-block {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--app-code-bg);
+  color: var(--app-code-fg);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--app-border-strong);
+}
+
+.code-block__row {
+  display: grid;
+  grid-template-columns: 3.25rem 1fr;
+  align-items: stretch;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  transition: background-color 120ms ease;
+}
+
+.code-block__gutter {
+  color: var(--app-code-gutter);
+  text-align: right;
+  padding: 0 0.75rem;
+  user-select: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  font-variant-numeric: tabular-nums;
+}
+
+.code-block__line {
+  white-space: pre;
+  padding: 0 1rem;
+  overflow-x: auto;
+}
+
+.code-block__row--interactive {
+  cursor: pointer;
+}
+
+.code-block__row--interactive:hover {
+  background: var(--app-code-line-hover);
+}
+
+.code-block__row--selected {
+  background: var(--app-code-line-selected);
+}
+
+.code-block__row--correct {
+  background: var(--app-code-line-correct);
+}
+
+.code-block__row--incorrect {
+  background: var(--app-code-line-incorrect);
+}
+
+/* Token colours for the lightweight code highlighter */
+.tok-key {
+  color: #f0a8e1;
+}
+.tok-str {
+  color: #b9e4a4;
+}
+.tok-num {
+  color: #f7c87a;
+}
+.tok-com {
+  color: #6f7a8c;
+  font-style: italic;
+}
+.tok-fn {
+  color: #80c8ff;
+}
+.tok-ty {
+  color: #79e0c4;
+}
+.tok-op {
+  color: #d8dde6;
+}
+.tok-pun {
+  color: #c5cad6;
+}
+
+/* Focus ring used by Mantine */
+:where([data-focus-ring]) {
+  outline-color: var(--app-accent) !important;
 }
