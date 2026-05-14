@@ -1,11 +1,13 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Open_Sans, JetBrains_Mono } from "next/font/google";
 
-// globals.css must come first: it declares `@layer theme, base, mantine,
-// components, utilities;`. CSS cascade-layer order is fixed by the first time
-// each name appears, so if Mantine's `@layer mantine { ... }` block loaded
-// first it would claim position #1 and Tailwind's preflight (in `base`) would
-// end up overriding all Mantine padding/border/radius styles.
+import {
+  BRAND_BG_DARK,
+  SITE_DESCRIPTION,
+  SITE_KEYWORDS,
+  SITE_NAME,
+  SITE_URL,
+} from "@/lib/seo";
 import "./globals.css";
 import "@mantine/core/styles.layer.css";
 import "@mantine/notifications/styles.layer.css";
@@ -34,13 +36,73 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "PatchQuest",
-    template: "%s · PatchQuest",
+    default: `${SITE_NAME}`,
+    template: `%s · ${SITE_NAME}`,
   },
-  description:
-    "Practice secure coding, vulnerability identification, threat modeling, " +
-    "GDPR reasoning, and cryptography for TDT4237 - Software Security and Data Privacy.",
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: SITE_KEYWORDS,
+  authors: [
+    {
+      name: "Fredrik Carsten Hansteen",
+      url: "mailto:fhansteen@gmail.com",
+    },
+  ],
+  creator: "Fredrik Carsten Hansteen",
+  publisher: "Fredrik Carsten Hansteen",
+  category: "education",
+  classification: "Educational",
+  referrer: "origin-when-cross-origin",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: `${SITE_NAME}`,
+    description: SITE_DESCRIPTION,
+    url: "/",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME}`,
+    description: SITE_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  appleWebApp: {
+    capable: true,
+    title: SITE_NAME,
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  colorScheme: "light dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: BRAND_BG_DARK },
+  ],
 };
 
 export default function RootLayout({
