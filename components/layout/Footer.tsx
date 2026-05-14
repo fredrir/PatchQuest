@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Anchor, Group, Tooltip } from "@mantine/core";
 import { GitHubIcon, MailIcon } from "@/components/common/Icon";
+import { ThemeToggle } from "../common/ThemeToggle";
 
 const GITHUB_URL = "https://github.com/fredrir/PatchQuest";
 const EMAIL = "fhansteen@gmail.com";
@@ -77,6 +78,7 @@ export function Footer() {
               <MailIcon size={18} />
             </Anchor>
           </Tooltip>
+          <ThemeToggle className="bg-inherit text-white rounded-lg text-white transition-all  hover:bg-white/20" />
         </Group>
       </div>
     </Group>

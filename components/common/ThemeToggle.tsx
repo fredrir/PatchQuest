@@ -34,13 +34,20 @@ const LABEL: Record<MantineColorScheme, string> = {
   auto: "System theme",
 };
 
-const ICON: Record<MantineColorScheme, (props: { size?: number }) => React.ReactElement> = {
+const ICON: Record<
+  MantineColorScheme,
+  (props: { size?: number }) => React.ReactElement
+> = {
   light: SunIcon,
   dark: MoonIcon,
   auto: MonitorIcon,
 };
 
-export function ThemeToggle() {
+interface Props {
+  className?: string;
+}
+
+export function ThemeToggle({ className }: Props) {
   const { colorScheme, setColorScheme } = useMantineColorScheme();
 
   // The color scheme is resolved by `ColorSchemeScript` at runtime, so the
@@ -58,6 +65,7 @@ export function ThemeToggle() {
         variant="default"
         aria-label={`Switch to ${LABEL[next]}`}
         onClick={() => setColorScheme(next)}
+        className={className}
       >
         <Icon size={18} />
       </ActionIcon>

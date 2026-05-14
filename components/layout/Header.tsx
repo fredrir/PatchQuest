@@ -55,7 +55,6 @@ export function Header({ navOpened, onToggleNav }: Props) {
       </Group>
       <Group gap="sm" wrap="nowrap" visibleFrom="sm">
         <ExamModeToggle compact />
-        <ThemeToggle />
       </Group>
     </Group>
   );
