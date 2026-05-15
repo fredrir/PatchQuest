@@ -43,7 +43,7 @@ export function FindAndFixRunner({ challenges, examMode }: Props) {
   const challenge = runner?.state.current;
   const fixOptions = useShuffled(challenge?.fixOptions ?? []);
 
-  if (!runner) {
+  if (!runner || !challenge) {
     return (
       <RunnerScaffold
         modeTitle="Find & Fix"
