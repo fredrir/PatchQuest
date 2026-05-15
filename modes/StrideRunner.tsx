@@ -8,7 +8,7 @@ import { useChallengeRunner } from "./useChallengeRunner";
 import { RunnerScaffold } from "./RunnerScaffold";
 import { GAME_MODE_IDS } from "@/domain/gameMode";
 import type { Challenge } from "@/domain/challenge";
-
+import TipBox from "@/components/challenge/TipBox";
 
 interface Props {
   challenges: readonly Challenge[];
@@ -99,10 +99,12 @@ export function StrideRunner({ challenges, examMode }: Props) {
               ) : null}
             </Stack>
           </Paper>
-          <Text size="xs" c="dimmed">
-            STRIDE = Spoofing, Tampering, Repudiation, Information disclosure,
-            Denial of service, Elevation of privilege.
-          </Text>
+
+          <TipBox
+            hint={
+              "Spoofing\nTampering\nRepudiation\nInformation disclosure\nDenial of service\nElevation of privilege."
+            }
+          />
         </Stack>
       }
       answer={

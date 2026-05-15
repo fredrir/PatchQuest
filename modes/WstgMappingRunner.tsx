@@ -1,15 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Alert,
-  Button,
-  Group,
-  Paper,
-  SimpleGrid,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Paper, SimpleGrid, Stack, Text } from "@mantine/core";
 import { AnswerPanel } from "@/components/challenge/AnswerPanel";
 import { CodeViewer } from "@/components/challenge/CodeViewer";
 import { ScenarioChoiceCard } from "@/components/answers/ScenarioChoiceCard";
@@ -18,6 +10,7 @@ import { RunnerScaffold } from "./RunnerScaffold";
 import { GAME_MODE_IDS } from "@/domain/gameMode";
 import { useShuffled } from "@/lib/useShuffled";
 import type { Challenge } from "@/domain/challenge";
+import TipBox from "@/components/challenge/TipBox";
 import { OWASP_TOP_10, OwaspTop10Id } from "@/domain/owasp";
 
 interface Props {
@@ -33,13 +26,12 @@ export function WstgMappingRunner({ challenges, examMode }: Props) {
   });
 
   const [selected, setSelected] = useState<string | null>(null);
-  const [tipOpen, setTipOpen] = useState(false);
+
   const currentId = runner?.state.current?.id;
   const [prevId, setPrevId] = useState(currentId);
   if (prevId !== currentId) {
     setPrevId(currentId);
     setSelected(null);
-    setTipOpen(false);
   }
 
   const challenge = runner?.state.current;
@@ -67,9 +59,6 @@ export function WstgMappingRunner({ challenges, examMode }: Props) {
 
   const { state, controls } = runner;
 
-  const owaspTop10Title =
-    OWASP_TOP_10[mapping?.top10Hint as OwaspTop10Id] ?? null;
-
   const handleSubmit = () => {
     if (!challenge) return;
     controls.submit({
@@ -80,6 +69,9 @@ export function WstgMappingRunner({ challenges, examMode }: Props) {
       selectedOptionId: selected,
     });
   };
+
+  const owaspTop10Title =
+    OWASP_TOP_10[mapping?.top10Hint as OwaspTop10Id] ?? null;
 
   return (
     <RunnerScaffold
@@ -119,37 +111,9 @@ export function WstgMappingRunner({ challenges, examMode }: Props) {
               </Stack>
             </Paper>
           )}
-          {mapping?.top10Hint ? (
-            tipOpen ? (
-              <Alert
-                color="ntnuBlue"
-                variant="light"
-                radius="md"
-                title="Tip"
-                withCloseButton
-                onClose={() => setTipOpen(false)}
-              >
-                <Text size="sm">
-                  Aligns with OWASP Top 10 category{": "}
-                  <Text span fw={600}>
-                    {mapping.top10Hint} {" -"} {owaspTop10Title}
-                  </Text>
-                  .
-                </Text>
-              </Alert>
-            ) : (
-              <Group justify="flex-start">
-                <Button
-                  size="xs"
-                  variant="subtle"
-                  color="ntnuBlue"
-                  onClick={() => setTipOpen(true)}
-                >
-                  Show tip
-                </Button>
-              </Group>
-            )
-          ) : null}
+          <TipBox
+            hint={`Aligns with OWASP Top 10 category: ${mapping?.top10Hint} - ${owaspTop10Title}`}
+          />
         </Stack>
       }
       answer={
